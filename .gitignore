@@ -1,0 +1,41 @@
+# ---- Generated data (never commit; regenerate with data-gen) ----
+data/
+*.ndjson
+*.ndjson.gz
+
+# ---- Secrets / credentials (never commit) ----
+.env
+.env.*
+!.env.example
+*.p8
+*.pem
+*.key
+rsa_key*
+snowflake_key*
+connections.toml
+.snowsql/
+
+# ---- Tableau packaged/extract files (only .twb / .tds go in git) ----
+*.twbx
+*.tdsx
+*.hyper
+*.tde
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+
+# ---- OS / editors ----
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

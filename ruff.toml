@@ -1,0 +1,7 @@
+# Lint config for scripts/ and bootstrap/ (data-gen/ has its own in pyproject.toml)
+line-length = 120
+target-version = "py312"
+extend-exclude = ["data-gen"]
+
+[lint]
+select = ["E", "F", "W", "I", "B", "UP"]

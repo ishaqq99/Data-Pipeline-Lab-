@@ -1,0 +1,35 @@
+name: ci-guardrails
+
+# Runs on every PR: blocks infra DDL/grants in snowflake/, edits to applied V__ migrations,
+# Tableau queries that bypass BYOD_INFOSEC, and stale bootstrap renders.
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  guardrails:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0            # needed to diff against the base branch
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Unit tests for the guardrail rules
+        run: pip install pytest ruff && pytest -q scripts/test_guardrails.py && ruff check . && ruff format --check .
+      - name: Guardrails (PR = compare with base branch)
+        if: github.event_name == 'pull_request'
+        run: python scripts/guardrails.py --base "origin/${{ github.base_ref }}"
+      - name: Guardrails (main)
+        if: github.event_name != 'pull_request'
+        run: python scripts/guardrails.py
+      - name: Bootstrap SQL rendered from template
+        run: python bootstrap/snowflake/render.py --check

@@ -1,0 +1,45 @@
+name: ci-python
+
+# Phase 1: lint + test the data generator. Phase 4 adds SQL lint, security scan,
+# secret scanning, schemachange dry run and deploys.
+on:
+  pull_request:
+    paths: ["data-gen/**", ".github/workflows/ci-python.yml"]
+  push:
+    branches: [main]
+    paths: ["data-gen/**", ".github/workflows/ci-python.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-python-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: data-gen
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: data-gen/pyproject.toml
+      - name: Install
+        run: pip install -e ".[dev]"
+      - name: Lint
+        run: |
+          ruff check .
+          ruff format --check .
+      - name: Test
+        run: pytest
+      - name: Smoke-run generator (small)
+        run: python -m vulngen --out "$RUNNER_TEMP/data" --tenable-assets 20 --wiz-assets 20 --tenable-findings 200 --wiz-findings 200

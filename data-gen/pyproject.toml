@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vulngen"
+version = "0.1.0"
+description = "Deterministic synthetic Tenable + Wiz vulnerability data for a CI/CD home lab"
+requires-python = ">=3.12"
+dependencies = []          # standard library only
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[project.scripts]
+vulngen = "vulngen.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["vulngen*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S"]
+ignore = ["S311"]          # random is intentional: synthetic, seeded, not crypto
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101"]       # asserts are fine in tests

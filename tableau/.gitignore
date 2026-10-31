@@ -1,0 +1,6 @@
+# Only XML workbooks (.twb) and data sources (.tds) are versioned.
+# Packaged files and extracts contain data snapshots and binary blobs.
+*.twbx
+*.tdsx
+*.hyper
+*.tde
