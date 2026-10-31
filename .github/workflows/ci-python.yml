@@ -4,10 +4,8 @@ name: ci-python
 # secret scanning, schemachange dry run and deploys.
 on:
   pull_request:
-    paths: ["data-gen/**", ".github/workflows/ci-python.yml"]
   push:
     branches: [main]
-    paths: ["data-gen/**", ".github/workflows/ci-python.yml"]
   workflow_dispatch:
 
 permissions:
